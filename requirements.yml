@@ -22,7 +22,7 @@
   name: apt-cacher-ng
 
 - src: https://github.com/shelleg/ansible-role-ca.git
-  version: dev
+  version: master
   name: ca
 
 - src: https://github.com/shelleg/ansible-role-dnsmasq.git
