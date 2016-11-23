@@ -1,0 +1,53 @@
+---
+# Ansible managed: /Users/hagzag/projects/shelleg/docker-swarm-workshop/site-roles/infra-init/templates/servers.yml.j2 modified on 2016-11-14 20:15:22 by hagzag on hagzags-mac
+# Do not edit manually unless you know what your doing ;)
+
+- name: infra01
+  box: bento/ubuntu-16.04
+  ram: 1024
+  ip:  172.16.1.110
+  
+- name: ci
+  box: bento/ubuntu-16.04
+  ram: 1024
+  ip:  172.16.1.109
+
+
+- name: swarm-mgr01
+  box: bento/ubuntu-16.04
+  ram: 512
+  ip:  172.16.1.111
+
+
+- name: swarm-worker01
+  box: bento/ubuntu-16.04
+  ram: 512
+  ip:  172.16.1.112
+  
+- name: swarm-worker02
+  box: bento/ubuntu-16.04
+  ram: 512
+  ip:  172.16.1.113
+  
+
+- name: registry01
+  box: bento/ubuntu-16.04
+  ram: 1024
+  ip:  172.16.1.114
+
+# e.g output:
+# - name: shelleg-manager
+#   box: ubuntu/trusty64
+#   ram: 1024
+#   ip: 172.16.1.111
+#
+# - name: shelleg-node
+#   box: ubuntu/trusty64
+#   ram: 1024
+#   ip: 172.16.1.112
+#
+# - name: shelleg-replica
+#   box: ubuntu/trusty64
+#   ram: 1024
+#   ip: 172.16.1.113
+#

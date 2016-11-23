@@ -1,0 +1,37 @@
+# Ansible managed: /Users/hagzag/projects/shelleg/docker-swarm-workshop/site-roles/infra-init/templates/inventory.j2 modified on 2016-11-16 08:26:31 by hagzag on hagzags-mac
+# Do not edit manually unless you know what your doing ;) 
+
+[infra01]
+infra01 ansible_host="172.16.1.110" ansible_port=22 ansible_user="vagrant" ansible_ssh_private_key_file="/Users/hagzag/projects/shelleg/docker-swarm-workshop/playbooks/../vagrant/.vagrant/machines/infra01/virtualbox/private_key" ip="172.16.1.110"
+
+
+[infra-instances]
+infra01
+
+[ci]
+ci ansible_host="172.16.1.109" ansible_port=22 ansible_user="vagrant" ansible_ssh_private_key_file="/Users/hagzag/projects/shelleg/docker-swarm-workshop/playbooks/../vagrant/.vagrant/machines/ci/virtualbox/private_key" ip="172.16.1.109"
+
+[ci-servers]
+ci
+
+[swarm-mgr01]
+swarm-mgr01 ansible_host="172.16.1.111" ansible_port=22 ansible_user="vagrant" ansible_ssh_private_key_file="/Users/hagzag/projects/shelleg/docker-swarm-workshop/playbooks/../vagrant/.vagrant/machines/swarm-mgr01/virtualbox/private_key" ip="172.16.1.111"
+
+[swarm-worker01]
+swarm-worker01 ansible_host="172.16.1.112" ansible_port=22 ansible_user="vagrant" ansible_ssh_private_key_file="/Users/hagzag/projects/shelleg/docker-swarm-workshop/playbooks/../vagrant/.vagrant/machines/swarm-worker01/virtualbox/private_key" ip="172.16.1.112"
+
+[swarm-worker02]
+swarm-worker02 ansible_host="172.16.1.113" ansible_port=22 ansible_user="vagrant" ansible_ssh_private_key_file="/Users/hagzag/projects/shelleg/docker-swarm-workshop/playbooks/../vagrant/.vagrant/machines/swarm-worker02/virtualbox/private_key" ip="172.16.1.113"
+
+
+[swarm-manager-instances]
+swarm-mgr01
+
+[swarm-instances]
+swarm-mgr01
+swarm-worker01
+swarm-worker02
+
+[swarm-worker-instances]
+swarm-worker01
+swarm-worker02

@@ -1,0 +1,10 @@
+---
+
+
+
+
+docker network create -d overlay swarmnet
+docker service create --name frontend --replicas 5 -p 80:80/tcp \
+  --network swarmnet mywebapp
+
+docker service create --name redis --network swarmnet redis:latest
