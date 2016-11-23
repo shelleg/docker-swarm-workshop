@@ -1,0 +1,32 @@
+---
+# tasks file for ansible-role-infra-init
+
+- name: "Create docker registry vagrant box"
+  command: "vagrant up {{ item.cname }}"
+  args:
+      chdir: "{{ shelleg.vagrant_dir }}"
+  with_items: 
+    - "{{ hosts.registry }}"
+  when: (clean is undefined) or
+        (skip_create is defined)
+
+- name: "Add registry nodes to Ansible inventory"
+  add_host:
+    # ansible args
+    ansible_host: "{{ item.ip }}"
+    ansible_port: "{{ item.ssh_port }}"
+    ansible_user: "{{ item.user }}"
+    # extra args
+    name: "{{ item.cname }}"
+    cname: "{{ item.cname }}"
+    user: "{{ item.user }}"
+    pass: "{{ item.pass }}"
+    box: "{{ item.box }}"
+    ip: "{{ item.ip }}"
+    ram: "{{ item.ram }}"
+    ssh_port: "{{ item.ssh_port }}"
+    ansible_ssh_private_key_file: "{{ shelleg.vagrant_dir }}/.vagrant/machines/{{ item.cname }}/virtualbox/private_key"
+    # hot groups
+    groups: "{{ hosts.registry_group_name }}"
+  with_items:
+    - "{{ hosts.registry }}"

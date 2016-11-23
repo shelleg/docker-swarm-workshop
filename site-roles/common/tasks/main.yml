@@ -1,0 +1,17 @@
+---
+# tasks file for shelleg-common
+
+- fail: "msg=\"This role requires shelleg context - read more at http:// url to docs\""
+  when: "shelleg is undefined or hosts is undefined"
+
+- name: "Set Hostname(s)"
+  include: "hostname.yml"
+
+- name: "Check internet mode"
+  include: "connectivity.yml"
+
+- name: "Check if docker mode is on/off"
+  include: "docker_mode.yml"
+
+- name: "Check id dns is installed locally and return dnsmasq == true|false"
+  include: "check_dns.yml"

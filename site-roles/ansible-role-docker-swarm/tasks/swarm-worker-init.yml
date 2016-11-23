@@ -1,0 +1,12 @@
+---
+#- debug: var=hostvars[groups['swarm_temp'][0]]['swarm_manager']
+#- debug: var=hostvars[groups['swarm_temp'][0]]['swarm_manager_join_token']
+#- debug: var=hostvars[groups['swarm_temp'][0]]['swarm_worker_join_token']
+
+#- set_fact:
+#    swarm_manager_hostname: "{{ hostvars[groups['swarm-manager-instances'][0]]['inventory_hostname']}}"
+#    swarm_manager_ip: "{{ hostvars[swarm_manager_hostname].ip }}"
+
+- name: Swarm Join
+  shell: docker swarm join "{{ hostvars[groups['swarm_temp'][0]]['swarm_manager'] }}":2377 --token "{{ hostvars[groups['swarm_temp'][0]]['swarm_worker_join_token'] }}"
+  when: swarm_avail|failed

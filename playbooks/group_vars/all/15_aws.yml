@@ -1,0 +1,23 @@
+---
+# might clash with ec2* hence prefixed with aws:
+aws:
+  ec2:
+    aws_access_key: "{{ aws_access_key|default(lookup('env', 'AWS_ACCESS_KEY')) }}"
+    aws_secret_key: "{{ aws_secret_key|default(lookup('env', 'AWS_SECRET_KEY')) }}"
+    region: "{{ lookup('env','AWS_REGION') }}"
+    ssh_key: swarm-cluster
+    node_count: 3
+    sg_name: swarm-cluster
+    instance_prefix: shelleg-
+    ami: ami-be3559cd
+    instance_type: t2.medium
+  vpc:
+    name: swarm-cluster
+    region: "{{ shelleg.aws_region }}"
+    cidr_block: 172.16.0.0/16
+    cidr_1: "{{ shelleg.net_prefix }}.0/20"
+    az_a: "{{ shelleg.aws_region }}a"
+    cidr_2: "{{ shelleg.net_prefix }}.0/20"
+    az_2: "{{ shelleg.aws_region }}b"
+    cidr_3: "{{ shelleg.net_prefix }}.0/20"
+    az_3: "{{ shelleg.aws_region }}c"

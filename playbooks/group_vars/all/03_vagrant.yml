@@ -1,0 +1,12 @@
+---
+
+# Vagrant related variables - utlized mainly by infra-init role
+
+vagrnat_user: vagrant
+vagrnat_pass: vagrant
+vagrant_ubuntu_box: "bento/ubuntu-16.04"
+vagrnat_centos_box: "centos/7"
+vagrant_default_ram: 512
+vagrant_ram_infra: 1024
+vagrant_dir: "{{ playbook_dir }}/../vagrant"
+vagrant_ssh_port: "{{ ssh_port }}"

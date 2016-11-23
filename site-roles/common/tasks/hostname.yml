@@ -1,0 +1,27 @@
+---
+- set_fact:
+    fqdn: "{{ inventory_hostname }}.{{ shelleg.domain }}"
+    hostname: "{{ inventory_hostname_short }}"
+
+- name: "Set Hostname with hostname command"
+  hostname: name="{{ hostname }}"
+
+- name: "Re-gather facts"
+  action: setup
+  when: ansible_hostname != fqdn
+
+- name: "Build hosts file (backups will be made)"
+  lineinfile:
+    dest: /etc/hosts
+    line: '127.0.0.1       {{ ansible_hostname }}.{{ shelleg.domain }}  {{ ansible_hostname }}'
+    insertafter: "^127.0.0.1"
+    state: present
+    backup: yes
+  when: shelleg.domain is defined
+
+#- name: "restart hostname"
+#  service: name=hostname state=restarted
+##  https://github.com/ansible/ansible-modules-core/issues/5472
+##  async: 45
+##  poll: 0
+#  when: ansible_distribution not in [ 'RedHat', 'CentOS' ]

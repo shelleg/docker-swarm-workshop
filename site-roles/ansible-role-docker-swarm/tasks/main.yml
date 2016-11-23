@@ -1,0 +1,33 @@
+---
+# tasks file for ansible-role-docker-swarm
+
+- name: "Install Docker-engine"
+  include: install-docker.yml
+
+- set_fact:
+    swarm_manager_hostname: "{{ hostvars[groups['swarm-manager-instances'][0]]['inventory_hostname']}}"
+
+- debug: var=swarm_manager_hostname
+
+- set_fact:
+    swarm_manager_ip: "{{ hostvars[swarm_manager_hostname].ip }}"
+
+- debug: var=swarm_manager_ip
+
+- block:
+
+    - name: "Is Swarm available || Active"
+      shell: docker info | grep -q "^Swarm"':'" active"
+      register: swarm_avail
+      changed_when: false
+      ignore_errors: True
+
+    - name: "Initialize|join swarm manager(s)"
+      include: swarm-manager-init.yml
+      when: inventory_hostname == swarm_manager_hostname
+
+    - name: "Initialize|join swarm worker(s)"
+      include: swarm-worker-init.yml
+      when: inventory_hostname != swarm_manager_hostname
+
+  when: docker_single is undefined

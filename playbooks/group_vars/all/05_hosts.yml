@@ -1,0 +1,77 @@
+---
+hosts:
+  ci_group_name: ci-servers
+  ci:
+    - cname: ci
+      ssl_key: ci-priv-key.pem
+      ssl_cert: ci-cert.pem
+      user: "{{ shelleg.user }}"
+      pass: "{{ shelleg.pass }}"
+      box: "{{ shelleg.ubuntu.box }}"
+      ip: "{{ shelleg.net_prefix }}.109"
+      ssh_port: "{{ shelleg.port }}"
+      ram: "{{ shelleg.ram_infra }}"
+  infra_group_name: infra-instances
+  infra:
+    - cname: infra01
+      ssl_key: infra01-priv-key.pem
+      ssl_cert: infra01-cert.pem
+      user: "{{ shelleg.user }}"
+      pass: "{{ shelleg.pass }}"
+      box: "{{ shelleg.ubuntu.box }}"
+      ip: "{{ shelleg.net_prefix }}.110"
+      ssh_port: "{{ shelleg.port }}"
+      ram: "{{ shelleg.ram_infra }}"
+      consul_leader: "true"
+      nfs_server: "true"
+      nfs_volume_size: 2048
+  swarm_group_name: swarm-instances
+  swarm:
+    swarm_managers_group_name: swarm-manager-instances
+    swarm_managers:
+      - cname: swarm-mgr01
+        ssl_key: swarm-mgr01-priv-key.pem
+        ssl_cert: swarm-mgr01-cert.pem
+        user: "{{ shelleg.user }}"
+        pass: "{{ shelleg.pass }}"
+        box: "{{ shelleg.ubuntu.box }}"
+        ip: "{{ shelleg.net_prefix }}.111"
+        ssh_port: "{{ shelleg.port }}"
+        ram: "{{ shelleg.ram }}"
+        consul_member: "true"
+    swarm_workers_group_name: swarm-worker-instances
+    swarm_workers:
+      - cname: swarm-worker01
+        ssl_key: swarm-node01-priv-key.pem
+        ssl_cert: swarm-node01-cert.pem
+        user: "{{ shelleg.user }}"
+        pass: "{{ shelleg.pass }}"
+        box: "{{ shelleg.ubuntu.box }}"
+        ip: "{{ shelleg.net_prefix }}.112"
+        ssh_port: "{{ shelleg.port }}"
+        ram: "{{ shelleg.ram }}"
+        consul_member: "true"
+      - cname: swarm-worker02
+        ssl_key: swarm-node02-priv-key.pem
+        ssl_cert: swarm-node02-cert.pem
+        user: "{{ shelleg.user }}"
+        pass: "{{ shelleg.pass }}"
+        box: "{{ shelleg.ubuntu.box }}"
+        ip: "{{ shelleg.net_prefix }}.113"
+        ssh_port: "{{ shelleg.port }}"
+        ram: "{{ shelleg.ram }}"
+        consul_member: "true"
+  registry_group_name: registry-instances
+  registry:
+    - cname: registry01
+      ssl_key: registry01-priv-key.pem
+      ssl_cert: registry01-cert.pem
+      user: "{{ shelleg.user }}"
+      pass: "{{ shelleg.pass }}"
+      box: "{{ shelleg.ubuntu.box }}"
+      ip: "{{ shelleg.net_prefix }}.114"
+      ssh_port: "{{ shelleg.port }}"
+      ram: "{{ shelleg.ram_infra }}"
+      consul_leader: "true"
+      nfs_server: "true"
+      nfs_volume_size: 2048

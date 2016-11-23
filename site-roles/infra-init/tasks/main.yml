@@ -1,0 +1,13 @@
+---
+# tasks file for ansible-role-infra-init
+
+- name:
+  include: vagrant.yml
+  when: (vagrant == true) and ((aws == false) or (aws is undefined))
+
+#- name:
+#  include: aws.yml
+#  when: (aws is defined) and (vagrant is undefined)
+
+
+

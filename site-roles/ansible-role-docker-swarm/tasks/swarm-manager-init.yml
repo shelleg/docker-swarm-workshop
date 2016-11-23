@@ -1,0 +1,31 @@
+---
+
+- block:
+
+    - name: "Initialize Swarm"
+      shell: docker swarm init --advertise-addr "{{ swarm_manager_ip }}:2377"
+      when: swarm_avail|failed
+
+    - name: "Get Swarm manager token"
+      shell: docker swarm join-token -q manager
+      changed_when: false
+      register: manager_join_token
+
+    - name: "Get Swarm Worker token"
+      shell: docker swarm join-token -q worker
+      changed_when: false
+      register: worker_join_token
+
+    - name: "Set swarm tokens facts"
+      set_fact:
+        swarm_manager_join_token: "{{ manager_join_token.stdout }}"
+        swarm_worker_join_token: "{{ worker_join_token.stdout }}"
+
+    - name: "For portability among docks hosts - add hosts to group swarm_temp with join and manage tokens"
+      add_host: name={{ inventory_hostname }}
+              groups=swarm_temp
+              swarm_manager={{ hosts.swarm.swarm_managers[0].ip }}
+              swarm_manager_join_token={{ manager_join_token.stdout }}
+              swarm_worker_join_token={{ worker_join_token.stdout }}
+
+  when: inventory_hostname == swarm_manager_hostname

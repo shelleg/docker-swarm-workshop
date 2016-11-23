@@ -1,0 +1,6 @@
+---
+# notification related vars - slack, mail etc etc
+slack:
+  domain: tikal.slack.com
+  token: T02A1ARR8/B283PJF3R/4SLQImt9av1iBB3r8hSAaXgb
+  channel: #ansible

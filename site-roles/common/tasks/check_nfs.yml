@@ -1,0 +1,13 @@
+---
+- set_fact:
+    nfs_available: false
+
+- command: "showmount -e {{ "
+  ignore_errors: true
+  register: nfs_stat
+
+- set_fact:
+    nfs_available: true
+  when: "nfs_stat.rc == 0"
+
+- debug: "msg=\"{{ nfs_available }} nfs_available is set to: {{ nfs_available }}\""

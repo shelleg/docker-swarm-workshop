@@ -1,0 +1,58 @@
+---
+- hosts: localhost
+  vars:
+  pre_tasks:
+    - name: "Remove all known hosts from infra && swarm hosts -
+            unless you want to be insecure this is the best comprermise ..."
+      shell: "ssh-keygen -R {{ item.ip }}"
+      with_items:
+      - "{{ hosts.infra }}"
+      - "{{ hosts.ci }}"
+      - "{{ hosts.swarm.swarm_managers }}"
+      - "{{ hosts.swarm.swarm_workers }}"
+      ignore_errors: true
+    - name: "Pausing for 3 secs to let Ansible get a grip of ssh connections ..."
+      pause: seconds=3
+  roles:
+    -  role: infra-init
+       tags: init
+
+- hosts: infra-instances
+  become: true
+  vars:
+    ca_init: true
+    ca_certify_nodes: true
+    ca_fetch_keys: true
+#    ca_force_create: true
+    ca_force_certify_nodes: true
+    ca_distribute_keys: true
+    ca_wildcard: true
+    # standalone docker daemon
+    docker_single: true
+  roles:
+    - role: common
+      tags: always
+    - role: apt-cacher-ng
+      tags: core,apt
+    - role: ntp
+      tags: core,ntp
+    - role: dnsmasq
+      tags: core,consul,dns
+    - role: ca
+      tags: ca
+    - role: ansible-role-docker-swarm
+      tags: core,swarm
+    - role: docker-consul
+      tags: core,consul
+    - role: docker-registrator
+      tags: core,registrator
+    - role: docker-registry
+      tags: docker,swarm,registry
+  tasks:
+#    - name: "pull Docker Images Instead of downloading in realtime"
+#      docker_image:
+#        name: "{{ item.name }}:{{ item.tag }}"
+#      with_items: "{{ docker_images }}"
+
+
+

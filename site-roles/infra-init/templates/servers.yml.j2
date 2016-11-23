@@ -1,0 +1,62 @@
+---
+# {{ ansible_managed }}
+# Do not edit manually unless you know what your doing ;)
+
+{% for host in hosts.infra %}
+- name: {{ host.cname }}
+  box: {{ host.box }}
+  ram: {{ host.ram }}
+  ip:  {{ host.ip }}
+  {% if storage_mode == "nfs_with_extra_disk" %}
+	devices:
+    size: {{ host.nfs_volume_size }}
+  {% endif %}
+{% endfor %}
+
+{% for host in hosts.ci %}
+- name: {{ host.cname }}
+  box: {{ host.box }}
+  ram: {{ host.ram }}
+  ip:  {{ host.ip }}
+
+{% endfor %}
+
+{% for host in hosts.swarm.swarm_managers %}
+- name: {{ host.cname }}
+  box: {{ host.box }}
+  ram: {{ host.ram }}
+  ip:  {{ host.ip }}
+
+{% endfor %}
+
+{% for host in hosts.swarm.swarm_workers %}
+- name: {{ host.cname }}
+  box: {{ host.box }}
+  ram: {{ host.ram }}
+  ip:  {{ host.ip }}
+  
+{% endfor %}
+
+{% for host in hosts.registry %}
+- name: {{ host.cname }}
+  box: {{ host.box }}
+  ram: {{ host.ram }}
+  ip:  {{ host.ip }}
+
+{% endfor %}
+# e.g output:
+# - name: shelleg-manager
+#   box: ubuntu/trusty64
+#   ram: 1024
+#   ip: 172.16.1.111
+#
+# - name: shelleg-node
+#   box: ubuntu/trusty64
+#   ram: 1024
+#   ip: 172.16.1.112
+#
+# - name: shelleg-replica
+#   box: ubuntu/trusty64
+#   ram: 1024
+#   ip: 172.16.1.113
+#

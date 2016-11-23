@@ -1,0 +1,49 @@
+---
+# tasks file for ansible-role-infra-init
+
+- name: "Create / Verify {{ shelleg.vagrant_dir }}"
+  file:
+    name: "{{ shelleg.vagrant_dir }}"
+    state: directory
+
+- name: "Generate Vagrant run-time configurations"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ shelleg.vagrant_dir }}/{{ item }}"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+  with_items:
+    - servers.yml
+    - inventory
+    - Vagrantfile
+
+- name: "Generate global inventory file"
+  template:
+    src: inventory.j2
+    dest: "{{ shelleg.vagrant_dir }}/../inventories/inventory"
+    owner: "{{ ansible_user_id }}"
+    group: "{{ ansible_user_gid }}"
+  tags:
+  - conf
+
+- name: "Destroy vagrant boxes"
+  command: "vagrant destroy -f"
+  args:
+      chdir: "{{ shelleg.vagrant_dir }}"
+  when: (clean is defined) or (force is defined) 
+
+- name: "Infra hosts creation"
+  include: vagrant-infra.yml
+  when: create_infra == true
+
+- name: "Infra hosts creation"
+  include: vagrant-ci.yml
+  when: create_ci == true
+
+- name: "Swarm hosts creation"
+  include: vagrant-swarm.yml
+  when: create_swarm == true
+
+- name: "Registry hosts creation"
+  include: vagrant-registry.yml
+  when: create_registry == true

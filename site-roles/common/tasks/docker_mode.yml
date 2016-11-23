@@ -1,0 +1,19 @@
+---
+- set_fact:
+    docker_mode: false
+
+- command: "which docker"
+  ignore_errors: true
+  register: docker_stat
+
+- set_fact:
+    docker_mode: true
+  when: "docker_stat.rc == 0"
+
+- debug: "msg=\"{{ inventory_hostname }} docker_mode is set to: {{ docker_mode }}\""
+
+- debug: msg="docker_mode is => true"
+  when: docker_mode
+
+- debug: msg="docker_mode is => false"
+  when: not docker_mode

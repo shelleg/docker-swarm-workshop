@@ -1,0 +1,54 @@
+---
+# general vars - everything we might use in context of shelleg
+ssh_port: 22
+
+# domain related
+domain_prefix: shelleg
+domain_suffix: dev
+domain_name: "{{ domain_prefix }}.{{ domain_suffix }}"
+domain: "{{ domain_prefix }}.{{ domain_suffix }}"
+dns_searches:
+  - "{{ domain_name }}"
+dns:
+  primary: 8.8.8.8
+  secondary: 8.8.4.4
+
+# network related
+net_prefix: "172.16.1"
+subnet: '/24'
+network: "{{ net_prefix }}.0/{{ subnet }}"
+
+ca_distribution_certs_dir: "{{ playbook_dir }}/../keys_n_certs"
+pki_cert_dir: /etc/ssl/certs
+pki_key_dir: /etc/ssl/private
+
+###
+# vars below this line are deprecated and are here for backwards compatebility
+###
+shelleg:
+  user: vagrant
+  pass: vagrant
+  ubuntu:
+    box: "bento/ubuntu-16.04"
+  centos:
+    box: "centos/7"
+  net_prefix: "172.16.1"
+  subnet: '/24'
+  network: '172.16.1.0/24'
+  prefix: shelleg
+  ram: 512
+  ram_infra: 1024
+  port: 22
+  vagrant_dir: "{{ playbook_dir }}/../vagrant"
+  ca_distribution_certs_dir: "{{ playbook_dir }}/../keys_n_certs"
+  pki_cert_dir: /etc/pki/tls/certs
+  pki_key_dir: /etc/pki/tls/private
+  domain_prefix: shelleg
+  domain_suffix: dev
+  domain_name: shelleg.dev
+  domain: shelleg.dev
+  dns_searches:
+    - shelleg.dev
+  dns:
+    primary: 8.8.8.8
+    secondary: 8.8.4.4

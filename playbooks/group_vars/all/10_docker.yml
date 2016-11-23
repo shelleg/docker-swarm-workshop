@@ -1,0 +1,18 @@
+---
+# docker related vars
+docker_py_version: "1.10.6"
+docker_bridge_cidr: "172.17.1.0/24"
+docker_dns: "--dns=194.90.1.5 --dns=8.8.8.8"
+docker_registry: null
+insecure_registry: "{{ hosts.infra[0].ip }}:5000"
+docker_registry_mirror: "http://{{ hosts.infra[0].ip }}:5000"
+docker_images:
+  - { name: "shelleg/ntpd-ubuntu",        tag: "latest" }
+  - { name: "shelleg/dnsmasq-centos",     tag: "latest" }
+  - { name: "registry",                   tag: "2" }
+  - { name: "progrium/consul",            tag: "latest" }
+  - { name: "manomarks/visualizer",       tag: "latest" }
+  - { name: "gliderlabs/registrator",     tag: "latest" }
+  - { name: "mlabouardy/dockerswarm-ui",  tag: "latest" }
+  - { name: "gogs/gogs",                  tag: "latest" }
+  - { name: "jenkins",                    tag: "latest" }

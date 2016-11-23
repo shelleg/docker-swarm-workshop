@@ -1,0 +1,34 @@
+---
+- hosts: infra01
+
+  tasks:
+    - debug: var=inventory_hostname
+      when: inventory_hostname == hostvars[groups['infra-instances'][0]]['inventory_hostname']
+
+    - name: "dig infra01 - Verifying external resolution delegation is actually working !!!"
+      shell: "dig consul.service.consul @{{ hostvars[groups['infra-instances'][0]]['ip'] }}"
+      register: dig_infra01
+
+    - name: "dig consul on infra01 - Verifying consul resolution is actually working !!!"
+      shell: "dig consul.service.consul @{{ hostvars[groups['infra-instances'][0]]['ip'] }} -p8600"
+      register: dig_consul_infra01
+
+    - debug:
+        var: dig_infra01
+
+    - debug:
+        var: dig_consul_infra01
+
+    - name: "List Docker processes"
+      shell: "docker ps"
+      register: doccker_ps_on_infra01
+
+    - debug:
+        var: doccker_ps_on_infra01
+
+    - name: "Check resolving"
+      shell: "dig -t A www.tikalk.com"
+      register: dig_on_infra01
+
+    - debug:
+        var: dig_on_infra01

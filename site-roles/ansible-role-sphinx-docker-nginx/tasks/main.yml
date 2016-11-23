@@ -1,0 +1,52 @@
+---
+# tasks file for tutorial-deployer
+
+- name: "Install required packages"
+  apt: name={{ item }} state=latest
+  become: true
+  with_items:
+  - virtualenvwrapper
+  - python-pip
+  - python-dev
+  - bash-completion
+  - vim
+  - libjpeg-dev
+  - make
+
+- name: "Create dir"
+  file: path="{{ item }}" state=directory
+  with_items:
+    - "{{ tutorial_remote_srcdir }}"
+    - "{{ tutorial_wwwdir }}"
+
+- name: "Copy documentation source to destination"
+  copy: src="{{ tutorial_srcdir }}/" dest="{{ tutorial_remote_srcdir }}"
+
+- name: "Create virtualenv"
+  shell: . /etc/bash_completion.d/virtualenvwrapper && mkvirtualenv "{{ tutorial_virtualenv }}"
+  args:
+    executable: /bin/bash
+
+- name: "Install pip requirements"
+  pip: requirements="{{ tutorial_remote_srcdir }}/requirements.txt"
+
+- name: "Execute make html"
+  shell: "make html"
+  args:
+    executable: /bin/bash
+    chdir: "{{ tutorial_remote_srcdir }}"
+
+# docker run --name some-nginx -v /some/content:/usr/share/nginx/html:ro -d nginx
+- name: "Run Docker nginx container ..."
+  docker_container:
+    name: "{{ tutorial_virtualenv }}"
+    image: nginx:latest
+    state: started
+    restart: yes
+    ports:
+      - "80:80"
+    volumes:
+      - "{{ tutorial_wwwdir }}:{{ tutorial_nginx_docker_vol }}:ro"
+  register: nginx_output
+  tags:
+  - container

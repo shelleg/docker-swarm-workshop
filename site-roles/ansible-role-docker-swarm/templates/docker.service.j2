@@ -1,0 +1,31 @@
+#jinja2: trim_blocks: False
+[Unit]
+Description=Docker Application Container Engine
+Documentation=https://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+
+[Service]
+Environment={% if docker_env is defined %}{{docker_env}}{% endif %}
+ExecStart=/usr/bin/docker daemon \
+           {% if docker_opts.docker_tcp %}-H tcp://{{ docker_opts.listen_address }}:{{ docker_opts.listen_port }}  {% endif %} \
+           -H unix:///var/run/docker.sock \
+           --exec-opt native.cgroupdriver=cgroupfs \
+           --log-opt max-size=10m \
+           --log-opt max-file=2 \
+           --icc={{ docker_opts.icc }} \
+           {% if labels is defined -%}{% for key, value in labels.iteritems() %} --label {{ key }}="{{ value }}"{% endfor %}{%- endif %} \
+           {% if insecure_registry is defined -%} --insecure-registry {{ insecure_registry }}{%- endif %} \
+           {% if docker_registry_mirror is defined -%} --registry-mirror {{ docker_registry_mirror }}{%- endif %} \
+           {% if docker_opts.tlsverify %} --tlsverify --tlscacert={{ docker_host_cacert_file }} --tlscert={{ docker_host_cert_file }} --tlskey={{ docker_host_key_file }}{% endif %}
+
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+TimeoutStartSec = 0
+
+
+[Install]
+WantedBy=multi-user.target

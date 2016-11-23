@@ -1,0 +1,11 @@
+---
+# defaults file for ansible-role-infra-init
+vagrant: true
+create_infra: true
+create_ci: false
+create_swarm: false
+create_registry: false
+
+
+# could be native (nothing to do ...) / nfs_with_extra_disk / ceph ... TBD
+storage_mode: native

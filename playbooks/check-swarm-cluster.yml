@@ -1,0 +1,27 @@
+---
+- hosts: swarm-worker01
+  tasks:
+    - name: "check docker node command dosen't work on a regular swarm node"
+      shell: "docker node ls"
+      register: docker_node_cmd_out
+      ignore_errors: true
+
+    - debug: msg="{{ docker_node_cmd_out.stdout_lines }}"
+
+    - fail:
+        msg: "This operation should have failed"
+      when: docker_node_cmd_out.rc == 0
+
+- hosts: swarm-mgr01
+  tasks:
+    - name: "check docker node command works on a swarm manager node"
+      shell: "docker node ls"
+      register: docker_node_cmd_out
+      ignore_errors: true
+
+    - debug: msg="As you can see this is working ... on a manager node \n
+                  {{ docker_node_cmd_out.stdout_lines }}"
+
+    - fail:
+        msg: "This operation should have suceeded"
+      when: docker_node_cmd_out.rc != 0

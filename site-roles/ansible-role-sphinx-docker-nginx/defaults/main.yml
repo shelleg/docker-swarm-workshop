@@ -1,0 +1,9 @@
+---
+# defaults file for tutorial-deployer
+
+tutorial_virtualenv: tutorial
+tutorial_srcdir: "./../tutorial"
+tutorial_remote_srcdir: /var/lib/shelleg/tutorial/src
+tutorial_wwwdir: "{{ tutorial_remote_srcdir }}/build/html"
+tutorial_nginx_docker_vol: /usr/share/nginx/html
+

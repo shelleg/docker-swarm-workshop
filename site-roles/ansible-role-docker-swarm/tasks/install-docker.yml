@@ -1,0 +1,100 @@
+---
+# tasks file for ansible-role-docker-swarm
+
+- include_vars: "{{ ansible_os_family }}.yml"
+
+- name: "Install requirements"
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+
+- apt_key:
+    data: "{{ lookup('file', 'docker-apt-key') }}"
+    state: present
+
+- name: "Add repository"
+  apt_repository:
+    repo: 'deb {{ docker_repo }} ubuntu-{{ ansible_distribution_release }} main'
+    state: present
+
+- name: "Verify that apt is pulling from the right repository"
+  command: apt-cache policy docker-engine
+
+- name: "Install docker + reqs"
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - docker-engine
+    - python-pip
+  register: result
+  until: '"failed" not in result'
+  retries: 5
+  delay: 10
+
+- name: "Upgrade pip"
+  pip:
+    name: pip
+    extra_args: "--upgrade"
+
+- name: "Install docker-py"
+  pip:
+    name: docker-py
+    state: present
+    version: "{{ docker_py_version }}"
+
+- name: "create systemd drop-in directory"
+  file:
+    state: directory
+    path: "{{ docker_systemd_dir }}"
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Add users to the docker group
+  user:
+    name:   "{{ item }}"
+    groups: "{{ docker_group }}"
+    append: yes
+  with_items: "{{ docker_group_members }}"
+  when: docker_group_members is defined
+
+- name: "set host facts based on group vars"
+  set_fact:
+    docker_host_cacert_file: "{{ tlscacert_dir }}/ca.pem"
+    docker_host_cert_file: "{{ tlscert_dir }}/{{ item }}-cert.pem"
+    docker_host_key_file: "{{ tlskey_dir }}/{{ item }}-priv-key.pem"
+  with_inventory_hostnames: all:!localhost
+  when: inventory_hostname == "{{ item }}"
+
+- name: "set docker daemon options"
+  template:
+    src: docker.service.j2
+    dest: /etc/systemd/system/docker.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart docker
+  register: conf
+  tags:
+    - setconf
+
+- name: "reload systemd"
+  command: systemctl daemon-reload
+  when: conf.changed
+
+- name: "start docker service"
+  service:
+    name: docker
+    state: started
+    enabled: yes
+  register: started
+
+- name: wait until docker service is up
+  wait_for:
+    path: /var/run/docker.sock
+    delay: 10
+  when: (conf|changed) or (started|changed)

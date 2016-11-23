@@ -1,0 +1,13 @@
+---
+- set_fact:
+    internet_available: false
+
+- command: "ping 8.8.8.8 -c 4"
+  ignore_errors: true
+  register: ping_stat
+
+- set_fact:
+    internet_available: true
+  when: "ping_stat.rc == 0"
+
+- debug: "msg=\"{{ inventory_hostname }} internet_available is set to: {{ internet_available }}\""
