@@ -4,23 +4,23 @@
 - name: "Install Docker-engine"
   include: install-docker.yml
 
-- set_fact:
-    swarm_manager_hostname: "{{ hostvars[groups['swarm-manager-instances'][0]]['inventory_hostname']}}"
-
-- debug: var=swarm_manager_hostname
-
-- set_fact:
-    swarm_manager_ip: "{{ hostvars[swarm_manager_hostname].ip }}"
-
-- debug: var=swarm_manager_ip
-
 - block:
 
+    - set_fact:
+        swarm_manager_hostname: "{{ hostvars[groups['swarm-manager-instances'][0]]['inventory_hostname']}}"
+
+    - debug: var=swarm_manager_hostname
+
+    - set_fact:
+        swarm_manager_ip: "{{ hostvars[swarm_manager_hostname].ip }}"
+
+    - debug: var=swarm_manager_ip
+
     - name: "Is Swarm available || Active"
-      shell: docker info | grep -q "^Swarm"':'" active"
-      register: swarm_avail
-      changed_when: false
-      ignore_errors: True
+        shell: docker info | grep -q "^Swarm"':'" active"
+        register: swarm_avail
+        changed_when: false
+        ignore_errors: True
 
     - name: "Initialize|join swarm manager(s)"
       include: swarm-manager-init.yml
