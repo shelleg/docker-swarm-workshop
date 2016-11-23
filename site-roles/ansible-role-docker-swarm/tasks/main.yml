@@ -17,10 +17,10 @@
     - debug: var=swarm_manager_ip
 
     - name: "Is Swarm available || Active"
-        shell: docker info | grep -q "^Swarm"':'" active"
-        register: swarm_avail
-        changed_when: false
-        ignore_errors: True
+      shell: docker info | grep -q "^Swarm"':'" active"
+      register: swarm_avail
+      changed_when: false
+      ignore_errors: True
 
     - name: "Initialize|join swarm manager(s)"
       include: swarm-manager-init.yml
