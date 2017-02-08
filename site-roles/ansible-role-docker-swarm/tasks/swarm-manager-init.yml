@@ -21,6 +21,19 @@
         swarm_manager_join_token: "{{ manager_join_token.stdout }}"
         swarm_worker_join_token: "{{ worker_join_token.stdout }}"
 
+    - name: "create var file with swarm info (vars from swarm manager)"
+      template:
+        src: swarm-info.yml.j2
+        dest: "/tmp/99_swarm.yml"
+        mode: 0755
+
+    - name: "fetch var file"
+      fetch:
+        src: "/tmp/99_swarm.yml"
+        dest: "{{ playbook_dir }}/group_vars/all/99_swarm.yml"
+        flat: yes
+      become: false
+
     - name: "For portability among docks hosts - add hosts to group swarm_temp with join and manage tokens"
       add_host: name={{ inventory_hostname }}
               groups=swarm_temp

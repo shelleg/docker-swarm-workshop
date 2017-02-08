@@ -3,7 +3,6 @@ vagrant
 *.retry
 .idea
 log/ansible.log
-inventories/inventory
 setenv.sh
 galaxy-roles/*/*
 keys_n_certs/*.pem
@@ -48,7 +47,6 @@ coverage.xml
 # Development
 /test/develop
 venv
-Vagrantfile
 .vagrant
 ansible.egg-info/
 # perl

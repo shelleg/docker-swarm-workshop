@@ -1,1 +1,9 @@
 ---
+- name: "Update resolve conf to 8.8.8.8"
+  lineinfile:
+    dest: /etc/resolv.conf
+    line: 'nameserver 8.8.8.8'
+    regexp: "^nameserver"
+    state: present
+    backup: yes
+  when: internet_available

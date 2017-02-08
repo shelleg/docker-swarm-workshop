@@ -1,0 +1,69 @@
+---
+
+- hosts: infra01
+  become: true
+  vars:
+    ca_init: true
+    ca_certify_nodes: true
+    ca_fetch_keys: true
+#    ca_force_create: true
+    ca_force_certify_nodes: true
+    ca_distribute_keys: true
+    ca_wildcard: true
+    # standalone docker daemon
+    docker_single: true
+  roles:
+    - role: common
+      tags: always
+    - role: apt-cacher-ng
+      tags: core,apt
+    - role: ntp
+      tags: core,ntp
+    - role: dnsmasq
+      tags: core,consul,dns
+    - role: ca
+      tags: ca
+    - role: ansible-role-docker-swarm
+      tags: core,swarm
+    - role: docker-consul
+      tags: core,consul
+    - role: docker-registrator
+      tags: core,registrator
+    - role: docker-registry
+      tags: docker,swarm,registry
+  tasks:
+#    - name: "pull Docker Images Instead of downloading in realtime"
+#      docker_image:
+#        name: "{{ item.name }}:{{ item.tag }}"
+#      with_items: "{{ docker_images }}"
+
+- hosts: swarm-instances
+  become: yes
+#  become_user: root
+  vars:
+    ca_distribute_keys: true
+  roles:
+    - role: common # shellg common tasks
+      tags: always
+    - role: ntp
+      tags: core,ntp
+    - role: ca
+      tags: ca,core
+    - role: apt-cacher-ng   # become apt-cacher client
+      tags: core
+    - role: ansible-role-docker-swarm
+      tags: code,swarm
+    - role: dnsmasq         # configure to use dnsmasq as dns
+      tags: code,dns
+    - role: docker-registrator
+      tags: registrator
+#    - role: nfs
+#      tags: init,nfs
+
+
+- hosts: swarm-manager-instances
+  become: yes
+  become_user: root
+  roles:
+    - role: swarm-visualizer
+      tags: swarm,visualizer
