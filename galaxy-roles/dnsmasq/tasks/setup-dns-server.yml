@@ -1,0 +1,48 @@
+---
+
+- name: "Install dnsmasq pkg"
+  apt:
+    name: dnsmasq
+    state: latest
+    update_cache: true
+
+- name: "set resolve.conf to ignore by dnsmaq"
+  lineinfile:
+    dest: /etc/default/dnsmasq
+    line: 'IGNORE_RESOLVCONF=yes'
+    regexp: "^#IGNORE_RESOLVCONF"
+    state: present
+    backup: yes
+  when: ansible_os_family == "Debian"
+
+- name: "Generate hosts.dnsmasq file"
+  template:
+    src: "hosts.dnsmasq.j2"
+    dest: "/etc/hosts.dnsmasq"
+    owner: "root"
+    group: "root"
+    mode: 0744
+
+- name: "Set dnsmasq daemon options"
+  template:
+    src: "dnsmasq.conf.j2"
+    dest: "/etc/dnsmasq.conf"
+    owner: "root"
+    group: "root"
+    mode: 0744
+  notify: restart dnsmasq
+
+- name: "Create config dir"
+  file:
+    state: directory
+    name: /etc/dnsmasq.d
+    owner: root
+    group: root
+
+- name: "start dnsmasq service"
+  service:
+    name: dnsmasq
+    state: restarted
+    enabled: yes
+  register: started
+

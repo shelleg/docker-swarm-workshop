@@ -1,0 +1,15 @@
+---
+- name: "set fact dns_server for {{ inventory_hostname }}"
+  set_fact:
+    dns_server: 127.0.0.1
+  when: inventory_hostname == "{{ hosts.infra[0].cname }}"
+
+- set_fact:
+    dns_server: "{{ hosts.infra[0].ip }}"
+  when: inventory_hostname != "{{ hosts.infra[0].cname }}"
+
+- name: "Set our new dns in /etc/resolv.conf"
+  template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+

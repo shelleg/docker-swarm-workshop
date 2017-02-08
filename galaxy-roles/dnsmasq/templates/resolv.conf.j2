@@ -1,0 +1,10 @@
+# {{ ansible_managed }}
+{% if shelleg.domain_name is defined %}
+domain {{ shelleg.domain_name }}
+{% else %}
+domain domain.local
+{% endif %}
+nameserver {{ dns_server }}
+{% if shelleg.dns_searches is defined %}
+search {% for name in  shelleg.dns_searches %}{{name}} {% endfor %}
+{% endif %}

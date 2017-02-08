@@ -1,0 +1,25 @@
+---
+dnsmasq_container_prefix: shelleg/dnsmasq-centos
+dnsmasq_container_version: latest
+dnsmasq_container_name: "{{ dnsmasq_container_prefix }}:{{ dnsmasq_container_version }}"
+dnsmasq_default_domain: "{{ shelleg.domain_name | d('domain.local') }}"
+dnsmasq_local_hosts_file: /etc/hosts.dnsmasq
+dnsmasq_service_name: dnsmasq
+dnsmasq_tcp_port: 53
+dnsmasq_udp_port: 53
+dnsmasq_upstream_dns_servers:
+  - "{{ shelleg.primary_ns | d('8.8.8.8') }}"
+  - "{{ shelleg.secondary_ns | d('8.8.4.4') }}"
+dnsmasq_conf:
+  - domain-needed
+  - bogus-priv
+  - "domain={{ shelleg.domain_name | d('{{ dnsmasq_default_domain }}') }}"
+  - expand-hosts
+  - "local=/{{ shelleg.domain_name | d('{{ dnsmasq_default_domain }}') }}/"
+  - "listen-address=0.0.0.0"
+#  - "listen-address=127.0.0.1"
+#  - "listen-address={{ docker_bridge_ip }}"
+  - bind-interfaces
+  - no-hosts
+  - "addn-hosts={{ dnsmasq_local_hosts_file }}"
+  - conf-dir=/etc/dnsmasq.d

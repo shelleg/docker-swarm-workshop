@@ -1,0 +1,14 @@
+---
+# handlers file for dnsmasq-docker-ansible-role
+
+  - name: restart dnsmasq
+    service: name=dnsmasq state=restarted
+    become: yes
+
+  - name: start dnsmasq
+    service: name=dnsmasq state=started
+    become: yes
+
+  - name: stop dnsmasq
+    service: name=dnsmasq state=stopped
+    become: yes

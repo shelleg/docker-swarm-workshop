@@ -1,0 +1,17 @@
+[Unit]
+Description=dnsmasq container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run -d {{ dnsmasq_container_name }} \
+					-p "{{ dnsmasq_tcp_port }}:{{ dnsmasq_tcp_port }}" \
+					-p "{{ dnsmasq_udp_port }}:{{ dnsmasq_udp_port }}/udp" \
+					-v /etc/dnsmasq.conf:/etc/dnsmasq.conf \
+					-v /etc/hosts.dnsmasq:/etc/hosts.dnsmasq \
+					-v /etc/dnsmasq.d/10-consul:/etc/dnsmasq.d/10-consul
+ExecStop=/usr/bin/docker stop -t 2 {{ dnsmasq_container_name }}
+ExecStopPost=/usr/bin/docker rm -f {{ dnsmasq_container_name }}
+[Install]
+WantedBy=default.target

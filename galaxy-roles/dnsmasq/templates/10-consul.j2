@@ -1,0 +1,23 @@
+# {{ ansible_managed }}
+# Do not edit manually unless you know what your doing ;)
+#
+# origin -> https://www.consul.io/docs/guides/forwarding.html
+#
+# Enable forward lookup of the 'consul' domain:
+{% if consul_ip is defined and consul_port is defined  %}
+server="/consul/{{ consul_ip }}#{{ consul_port }}"
+{% else %}
+server="/consul/127.0.0.1#8600"
+{% endif %}
+
+# Uncomment and modify as appropriate to enable reverse DNS lookups for
+# common netblocks found in RFC 1918, 5735, and 6598:
+#rev-server=0.0.0.0/8,127.0.0.1#8600
+#rev-server=10.0.0.0/8,127.0.0.1#8600
+#rev-server=100.64.0.0/10,127.0.0.1#8600
+#rev-server=127.0.0.1/8,127.0.0.1#8600
+#rev-server=169.254.0.0/16,127.0.0.1#8600
+#rev-server=172.16.0.0/12,127.0.0.1#8600
+#rev-server=192.168.0.0/16,127.0.0.1#8600
+#rev-server=224.0.0.0/4,127.0.0.1#8600
+#rev-server=240.0.0.0/4,127.0.0.1#8600

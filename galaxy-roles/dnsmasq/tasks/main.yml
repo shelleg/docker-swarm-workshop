@@ -1,0 +1,15 @@
+---
+# tasks file for dnsmasq-docker-ansible-role
+
+### /usr/bin/docker run --name dnsmasq -d shelleg/dnsmasq-centos:latest -p 53:53 -p 53:53/udp -v /etc/dnsmasq.conf:/etc/dnsmasq.conf -v /etc/hosts.dnsmasq:/etc/hosts.dnsmasq
+
+- name: "Setup dns server"
+  include: setup-dns-server.yml
+  when: (inventory_hostname == "{{ hosts.infra[0].cname }}")
+  tags:
+    - dns
+
+- name: "setup dns client"
+  include: setup-dns-client.yml
+  tags:
+    - dns

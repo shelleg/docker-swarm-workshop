@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+# Do not edit manually unless you know what your doing ;)
+
+{% for i in dnsmasq_conf %}
+{{ i }}
+{% endfor %}
+
+{% if consul_ip is defined and consul_port is defined  %}
+server="/consul/{{ consul_ip }}#{{ consul_port }}"
+{% else %}
+server="/consul/127.0.0.1#8600"
+{% endif %}
+
+{% for i in dnsmasq_upstream_dns_servers %}
+server={{ i }}
+{% endfor %}
+
