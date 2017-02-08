@@ -1,0 +1,19 @@
+---
+# defaults file for ansible-role-docker-registrator
+
+consul_default_port: 8500
+#registrator_service_name: containarized-registrator
+registrator_container_name: registrator
+
+# Docker systemd service params
+registrator_description: "registrator Service registry via consul"
+registrator_container_prefix: gliderlabs/registrator
+registrator_container_tag: latest
+registrator_container_image: "{{ registrator_container_prefix }}:{{ registrator_container_tag }}"
+registrator_ports: []
+registrator_volumes: [ "/var/run/docker.sock:/tmp/docker.sock" ]
+registrator_extra_opts: [ "-h {{ registrator_service_name }}" ]
+
+registrator_cmd: "-ip {{ ansible_hostname }} consul://{{ consul_leader_ip }}:{{ consul_port }}"
+#registrator_cmd: "-ip 172.16.1.110 {{ consul_leader_ip }}:{{ consul_port }}"
+

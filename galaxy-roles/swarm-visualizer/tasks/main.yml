@@ -1,0 +1,14 @@
+---
+# tasks file for ansible-role-docker-registrator
+
+- include: docker-reqs.yml
+
+- name: "launch visualizer container"
+  docker_container:
+    name: "{{ visualizer_container_name }}"
+    image: "{{ visualizer_container_image }}"
+    state: started
+    restart_policy: always
+    restart: yes
+    published_ports: "{{ visualizer_ports }}"
+    volumes: "{{ visualizer_volumes }}"

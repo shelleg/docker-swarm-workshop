@@ -1,0 +1,20 @@
+---
+- name: "Install docker + reqs"
+  apt:
+    name: "{{ item }}"
+    #update_cache=yes
+    state: latest
+  with_items:
+    - docker-engine
+    - python-pip
+
+- name: "Upgrade pip"
+  pip:
+    name: pip
+    extra_args: "--upgrade"
+
+- name: "Install docker-py"
+  pip:
+    name: docker-py
+    state: present
+    version: "{{ docker_py_version }}"

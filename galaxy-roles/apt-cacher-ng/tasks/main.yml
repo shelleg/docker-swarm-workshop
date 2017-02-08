@@ -1,0 +1,18 @@
+---
+# tasks file for ansible-role-apt-cacher-ng
+
+- set_fact:
+    apt_cacher_instance_name: "{{ hosts.infra[0].cname }}"
+
+- include: setup-cacher.yml
+  when: inventory_hostname == apt_cacher_instance_name
+
+#- include: docker-cacher.yml
+#  when: docker_mode is defined
+
+- set_fact:
+    apt_proxy_host: "{{ hosts.infra[0].ip }}"
+  when: inventory_hostname != apt_cacher_instance_name
+
+- name: "set OS to cache apt-pakcdges"
+  include: set-proxy.yml

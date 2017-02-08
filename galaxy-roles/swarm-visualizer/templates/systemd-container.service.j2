@@ -1,0 +1,24 @@
+[Unit]
+Description={{ registrator_description }}
+After=docker.service
+Requires=docker.service
+
+[Service]
+TimeoutStartSec=0
+Restart=Always
+RestartSec=10s
+ExecStartPre=-/usr/bin/docker pull {{ registrator_container_image }}
+ExecStart=/usr/bin/docker run --rm -t \
+{% for volume in registrator_volumes %}
+    -v {{ volume }} \
+{% endfor %}
+{% for option in registrator_extra_opts %}
+    {{ option }} \
+{% endfor %}
+    --name {{ registrator_service_name }} {{ registrator_container_image }} {{ registrator_cmd }}
+
+ExecStop=-/usr/bin/docker stop {{ registrator_service_name }}
+ExecStopPost=-/usr/bin/docker rm {{ registrator_service_name }}
+
+[Install]
+WantedBy=multi-user.target

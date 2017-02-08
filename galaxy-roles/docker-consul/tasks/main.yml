@@ -1,0 +1,51 @@
+---
+# tasks file for ansible-role-docker-registrator
+
+- fail: "msg=\"This role requires shelleg context - read more at http:// url to docs\""
+  when: "shelleg is undefined or hosts is undefined"
+
+- include: docker-reqs.yml
+
+- name: "get & set consul leader facts"
+  set_fact:
+    consul_leader_hostname: "{{ item.cname }}"
+    consul_leader_ip: "{{ item.ip }}"
+    consul_port: "{{ consul_port | d('8500') }}"
+  when: ("{{ item.consul_leader }}" == "true")
+  with_items:
+  - "{{ hosts.infra }}"
+
+- debug:
+    var: consul_leader_hostname
+
+- debug:
+    var: consul_leader_ip
+
+- debug:
+    var: ansible_docker0.ipv4.address
+
+- name: "launch consul container"
+  docker_container:
+    name: "{{ consul_container_name }}"
+    image: "{{ consul_container_image }}"
+    state: started
+    restart_policy: always
+    restart: yes
+    ports:
+    - "8300:8300"
+    - "8301:8301"
+    - "8301:8301/udp"
+    - "8302:8302"
+    - "8302:8302/udp"
+    - "8400:8400"
+    - "{{ consul_port }}:{{ consul_port }}"
+    - "8600:8600/udp"
+    command: "{{ consul_cmd }}"
+
+- name: "reload dnsmasq for consul domain forwarding to take affect - check dnsmasq is running"
+  shell: "systemctl status dnsmasq"
+  register: dnsmasq_service_stat
+
+- name: "reload dnsmasq for consul domain forwarding to take affect - if running restart"
+  shell: "systemctl restart dnsmasq"
+  when: dnsmasq_service_stat.rc == 0

@@ -1,0 +1,16 @@
+registry:
+
+	# Docker registry url
+	url: http://{{ docker_registry_instance_name }}:{{ docker_registry_port }}/v{{ docker_registry_api_version }}
+
+	# Docker registry fqdn
+	name: {{ docker_registry_ui_registry_host |d('{{ inventory_hostname }}') }}:{{ docker_registry_port }}
+
+	# To allow image delete, should be false
+	readonly: {{ docker_registry_ui_readonly | d('false') }}
+
+	# Should registry-ui require authentication or not
+	auth:
+
+		# Disable authentication
+		enabled: {{ docker_registry_ui_auth | d('true') }}

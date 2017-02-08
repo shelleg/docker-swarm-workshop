@@ -1,0 +1,17 @@
+---
+# defaults file for ansible-role-apt-cacher-ng
+apt_mode: true
+# don't fail if shelleg-common isn't pre runned
+# default installation mode is a native os package
+docker_mode: false
+
+apt_cacher_ng_user: apt-cacher-ng
+apt_cacher_ng_group: apt-cacher-ng
+apt_cacher_ng_service_name: apt-cacher-ng
+apt_cacher_ng_container_prefix: shelleg/apt-cacher-ng
+apt_cacher_ng_container_version: latest
+apt_cacher_ng_container_name: "{{ apt_cacher_ng_container_prefix }}:{{ apt_cacher_ng_container_version }}"
+apt_cacher_ng_container_port: 3142
+apt_cacher_ng_dir: /etc/apt
+
+apt_cacher_ng_client_file: /etc/apt/apt.conf.d/01proxy

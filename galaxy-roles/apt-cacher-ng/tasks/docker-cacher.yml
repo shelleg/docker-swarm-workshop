@@ -1,0 +1,21 @@
+---
+- name: "Run Docker apt-cacher-ng container ..."
+  docker_container:
+    hostname: "{{ apt_cacher_ng_service_name }}"
+    name: "{{ apt_cacher_ng_service_name }}"
+    image: "{{ apt_cacher_ng_container_name }}"
+    state: started
+    restart: yes
+    ports:
+      - "{{ apt_cacher_ng_container_port }}:{{ apt_cacher_ng_container_port }}"
+    volumes:
+      - /etc/apt:/etc/apt:ro
+#      - /etc/apt-cacher-ng/acng.conf:/etc/apt-cacher-ng/acng.conf:ro
+#      - /etc/apt-cacher-ng/centos_mirrors:/etc/apt-cacher-ng/centos_mirrors:ro
+  register: dnsmasq_output
+  tags:
+  - container
+
+- name: "set this fact so the host running cacher is also using the apt-cacher-ng"
+  set_fact:
+    apt_proxy_host: 127.0.0.1

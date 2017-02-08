@@ -1,0 +1,56 @@
+---
+- name: "Create {{ docker_registry_cache_dir }} to store docker image files"
+  file:
+    path: "{{ docker_registry_cache_dir }}"
+    state: directory
+
+- name: "Generate registry configuration"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ docker_registry_config_file }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - reg-config.yml
+
+- debug: var=docker_registry_instance_name
+
+- name: "Run docker-registry container"
+  docker_container:
+    image: "{{ docker_registry_image_name }}:{{ docker_registry_image_version }}"
+    name: "{{ docker_registry_instance_name }}"
+    hostname: "{{ docker_registry_instance_name }}"
+    ports:
+      - "{{ docker_registry_port }}:5000"
+    volumes: 
+      - "{{ docker_registry_cache_dir }}:{{ docker_registry_cache_dir }}"
+      - "{{ docker_registry_config_file }}:/etc/docker/registry/config.yml:ro"
+    state: started
+    restart: yes
+    restart_policy: always
+
+- name: "Generate registry ui configuration"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ docker_registry_ui_config_file }}"
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - ui-config.yml
+  when: docker_registry_enable_ui
+
+- name: "Run docker-registry ui container"
+  docker_container:
+    image: "{{ docker_registry_ui_image_name }}:{{ docker_registry_ui_image_version }}"
+    name: "{{ docker_registry_ui_instance_name }}"
+    ports:
+      - "{{ docker_registry_ui_port }}:8080"
+    volumes: "{{ docker_registry_ui_config_file }}:/conf/config.yml:ro"
+    links:
+      - "{{ docker_registry_instance_name }}"
+    state: started
+    restart: yes
+    restart_policy: always
+  when: docker_registry_enable_ui

@@ -1,0 +1,25 @@
+---
+
+- name: "remove apt proxy config before starting - or we are in a deadlock ;)"
+  file: path=/etc/apt/apt.conf.d/01proxy state=absent
+
+- file:
+    path: "/var/lib/dpkg/lock"
+    state: absent
+
+- name: "install apt pkgs"
+  apt: name="{{ item }}" state="installed" update_cache=true
+  with_items:
+    - curl
+    - apt-cacher-ng
+  when: docker_mode == False
+
+- name: "set this fact so the host running cacher is also using the apt-cacher-ng"
+  set_fact:
+    apt_proxy_host: 127.0.0.1
+
+- service:
+    name: apt-cacher-ng
+    state: started
+    enabled: yes
+

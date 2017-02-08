@@ -1,0 +1,36 @@
+---
+# tasks file for ansible-role-docker-registrator
+
+- fail: "msg=\"This role requires shelleg context - read more at http:// url to docs\""
+  when: "shelleg is undefined or hosts is undefined"
+
+- include: docker-reqs.yml
+
+- name: "get & set consul leader facts"
+  set_fact:
+    consul_leader_hostname: "{{ item.cname }}"
+    consul_leader_ip: "{{ item.ip }}"
+    consul_port: "{{ consul_port | d('8500') }}"
+  when: ("{{ item.consul_leader }}" == "true")
+  with_items:
+  - "{{ hosts.infra }}"
+
+- debug:
+    var: consul_leader_hostname
+
+- debug:
+    var: consul_leader_ip
+
+- debug:
+    var: ansible_docker0.ipv4.address
+
+- name: "launch regitrator container"
+  docker_container:
+    name: "{{ registrator_container_name }}"
+    image: "{{ registrator_container_image }}"
+    state: started
+    restart_policy: always
+    restart: yes
+    volumes:
+     - "/var/run/docker.sock:/tmp/docker.sock"
+    command: "{{ registrator_cmd }}"

@@ -1,0 +1,15 @@
+---
+# defaults file for ansible-role-docker-registrator
+
+visualizer_default_port: 8080
+#registrator_service_name: containarized-registrator
+visualizer_container_name: portainer
+
+# Docker systemd service params
+visualizer_description: "UI/Dashboard viewer for the swarm"
+visualizer_container_prefix: portainer/portainer
+visualizer_container_tag: latest
+visualizer_container_image: "{{ visualizer_container_prefix }}:{{ visualizer_container_tag }}"
+visualizer_ports: ["8080:9000"]
+visualizer_volumes: [ "/var/run/docker.sock:/var/run/docker.sock" ]
+

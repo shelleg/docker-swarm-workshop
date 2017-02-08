@@ -1,0 +1,8 @@
+- hosts: all
+
+  vars:
+    ntp_enabled: false
+    ntp_manage_config: true
+
+  roles:
+    - role_under_test

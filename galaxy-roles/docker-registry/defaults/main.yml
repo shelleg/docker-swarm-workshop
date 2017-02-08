@@ -1,0 +1,24 @@
+---
+# defaults file for ansible-role-docker-registry
+
+docker_registry_enable_ui: false
+
+docker_registry_cache_dir: /var/lib/registry
+docker_registry_config_file: /etc/docker-registry-config.yml
+docker_registry_instance_name: dockerreg # name of the container ...
+docker_registry_image_name: registry
+docker_registry_image_version: 2
+docker_registry_api_version: 2
+docker_registry_port: 5000
+
+docker_registry_ui_instance_name: dockerregui # name of the container ...
+docker_registry_ui_image_name: hyper/docker-registry-web
+docker_registry_ui_image_version: latest
+docker_registry_ui_port: 8080
+
+# ui config
+docker_registry_ui_auth: false
+docker_registry_ui_readonly: false
+docker_registry_ui_registry_host: "{{ inventory_hostname }}"
+docker_registry_ui_config_file: /etc/docker-registry-ui-config.yml
+

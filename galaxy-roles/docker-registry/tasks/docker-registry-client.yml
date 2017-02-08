@@ -1,0 +1,12 @@
+---
+
+# Add DOCKER_OPTS="--insecure-registry {{ docker_registry_instance_ip }}:5000" to /etc/default/docker
+- name: "Remove any insecure registry docker opts in case they are present"
+  lineinfile: dest={{ docker_conf_file }} regexp='^DOCKER_OPTS="--insecure-registry'
+              line='' state=absent
+
+- name: "Set insecure registry + registryu mirror options"
+  lineinfile: dest={{ docker_conf_file }} regexp="^DOCKER_OPTS=" insertafter="DOCKER_OPTS="
+              line='DOCKER_OPTS="--insecure-registry {{ docker_registry_instance_ip }}:5000" --registry-mirror=https://{{ docker_registry_instance_ip }}:5000'
+
+- service: name=docker state=restarted
